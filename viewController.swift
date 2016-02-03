@@ -4,6 +4,11 @@ import SwiftyJSON
 
 class ViewController: UIViewController {
 
+    
+    var names = [String]()
+    
+    @IBOutlet weak var tableView: UITableView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -11,14 +16,26 @@ class ViewController: UIViewController {
             .response {  request, response, data, error in
                 
                 if let data = data {
+                let json = JSON(data: data)
                 
-                    let json = JSON(data: data)
-                    print(json)
+                    for tweets in json.arrayValue {
+                        self.names.append(tweets["username"].stringValue)
+                     
+                    }
+                    
+                    self.updatesView()
         
                 }
         
         }
         
+    }
+    
+    
+    func updatesView() {
+    print(names)
+    tableView.reloadData()
+    
     }
 
     override func didReceiveMemoryWarning() {
@@ -26,6 +43,31 @@ class ViewController: UIViewController {
         
         
     }
+
+
+}
+
+extension ViewController: UITableViewDataSource {
+
+
+    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        
+        return names.count
+    }
+    
+    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        
+        let cell = tableView.dequeueReusableCellWithIdentifier("Cell")
+        let label = cell?.viewWithTag(1) as! UILabel
+        
+        let name = names[indexPath.row]
+        
+        label.text = "Name"
+        
+        return cell!
+        
+    }
+    
 
 
 }
